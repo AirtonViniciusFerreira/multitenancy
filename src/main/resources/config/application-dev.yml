@@ -30,14 +30,55 @@ spring:
   jackson:
     serialization:
       indent-output: true
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/multitenancy
-    username: multitenancy
-    password:
+  master:
+    repository:
+      packeges: com.mycompany.myapp.master.repository
+    entityManager:
+      packeges: com.mycompany.myapp.master.domain
+    datasource:
+      type: com.zaxxer.hikari.HikariDataSource
+      url: jdbc:postgresql://localhost:5432/multitenancy
+      username: multitenancy
+      password: multitenancy
     hikari:
-      poolName: Hikari
+      pool-name: multiTetancy_gerenciador
       auto-commit: false
+      # minimo de sessões ociosas
+      # defauld 10
+      #      minimum-ide: 2
+      # maximo de sessões
+      # defauld 10
+      #      maximum-pool-size: 1
+      # tempo de sessões ociosas
+      # defauld 600000 (10 minutos)
+      #      idle-timeout: 10000
+    liquibase:
+      enabled: false
+      contexts: dev, faker
+  tenancy:
+      default-tenant: -1
+      repository:
+        packeges: com.mycompany.myapp.repository
+      entityManager:
+        packages: com.mycompany.myapp.domain
+      datasource:
+        url: jdbc:postgresql://localhost:5432/
+        username: multitenancy
+        password: multitenancy
+        type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+      # minimo de sessões ociosas
+      # defauld 10
+      #      minimum-ide: 2
+      # maximo de sessões
+      # defauld 10
+      #      maximum-pool-size: 1
+      # tempo de sessões ociosas
+      # defauld 600000 (10 minutos)
+      #      idle-timeout: 10000
+      liquibase:
+        changeLog: classpath:config/liquibase/master.xml
+        contexts: dev, faker
   jpa:
     database-platform: tech.jhipster.domain.util.FixedPostgreSQL10Dialect
   liquibase:
@@ -74,7 +115,7 @@ server:
 jhipster:
   cache: # Cache configuration
     infinispan:
-      config-file: default-configs/default-jgroups-tcp.xml
+      config-file: infinispan/default-myapp-tcp.xml
       statsEnabled: true
       # local app cache
       local:
